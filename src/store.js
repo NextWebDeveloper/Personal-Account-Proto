@@ -2,11 +2,11 @@ import { createStore, applyMiddleware, compose } from 'redux'
 import { connectRouter, routerMiddleware } from 'connected-react-router'
 import thunk from 'redux-thunk'
 import * as History from 'history'
-import rootReducer from './modules'
+import newsReducer from './modules'
 
 export const history = History.createBrowserHistory()
 
-const initialState = {}
+const initialState = { idCounter: 0, news: [{ id: 0, title: 'title', description: 'description', lastEditTime: '27.06.2020, 22:38:06', image: 'https://habrastorage.org/files/0c7/09f/e40/0c709fe40de64b3e816f93d6053874ea.png' }] }
 const enhancers = []
 const middleware = [thunk, routerMiddleware(history)]
 
@@ -24,7 +24,7 @@ const composedEnhancers = compose(
 )
 
 export default createStore(
-  connectRouter(history)(rootReducer),
+  connectRouter(history)(newsReducer),
   initialState,
   composedEnhancers
 )
