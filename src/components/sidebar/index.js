@@ -1,4 +1,9 @@
 import React, { Fragment } from 'react'
+import { bindActionCreators } from 'redux'
+import { connect } from 'react-redux'
+import {
+    clearToken
+} from '../../modules/auth'
 import { Link } from 'react-router-dom'
 
 import clsx from 'clsx';
@@ -67,6 +72,7 @@ const useStyles = makeStyles((theme) => ({
 		}
 	},
 	menuLinkTitle: {
+		fontSize: '16px',
 		marginLeft: '8px'
 	},
 	userTitle: {
@@ -78,10 +84,14 @@ const useStyles = makeStyles((theme) => ({
 	}
 }));
 
-const Sidebar = ({ open, handleDrawerOpen, handleDrawerClose }) => {
+const Sidebar = ({ open, handleDrawerOpen, handleDrawerClose, clearToken }) => {
 
 	const classes = useStyles();
 	const theme = useTheme();
+
+	const logOut = () => {
+		clearToken();
+	}
 
 	return (
 		<Fragment>
@@ -134,6 +144,7 @@ const Sidebar = ({ open, handleDrawerOpen, handleDrawerClose }) => {
 				</Link>
 				<Divider />
 				<Button 
+					onClick={logOut}
 					className={classes.menuLink}>
 					<Icon>exit_to_app</Icon>
 					<span className={classes.menuLinkTitle}>Logout</span>
@@ -143,4 +154,12 @@ const Sidebar = ({ open, handleDrawerOpen, handleDrawerClose }) => {
 	)
 }
 
-export default Sidebar;
+const mapDispatchToProps = dispatch =>
+    bindActionCreators(
+        {
+            clearToken
+        },
+        dispatch
+    )
+
+export default connect(null, mapDispatchToProps)(Sidebar);

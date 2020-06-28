@@ -2,8 +2,8 @@ import React, { useState, useEffect, useRef } from 'react'
 import { bindActionCreators } from 'redux'
 import { connect } from 'react-redux'
 import {
-    saveNews
-} from '../../modules/news'
+    setToken
+} from '../../modules/auth'
 
 import TextField from '@material-ui/core/TextField';
 import Button from '@material-ui/core/Button';
@@ -48,7 +48,7 @@ const useStyles = makeStyles((theme) => ({
 }));
 
 
-const Auth = ({ history }) => {
+const Auth = ({ history, setToken }) => {
 
     const classes = useStyles();
 
@@ -84,11 +84,15 @@ const Auth = ({ history }) => {
             setAuthInProgress(true)
             setTimeout(() => {
                 if (checkAuth(auth)) {
+                    const token = Date.now().toString();
+                    localStorage.setItem('authToken', token)
+                    setToken(token);
+                    setAuthInProgress(false);
                     history.push('/news');
                 } else {
-                    setAuthWrongData(true)
+                    setAuthWrongData(true);
+                    setAuthInProgress(false);
                 }
-                setAuthInProgress(false)
             }, 1000)
         }
 
@@ -109,21 +113,21 @@ const Auth = ({ history }) => {
         <form
             onSubmit={handleSubmit}>
             <h1>Authentication required</h1>
-            { authWrongData ? <Box mb={2} color='error.main'>The entered data is incorrect. Try again</Box> : null}
+            {authWrongData ? <Box mb={2} color='error.main'>The entered data is incorrect. Try again</Box> : null}
             <Box mb={3}>
                 <TextField
                     value={auth.login}
                     error={validationErrors.login}
                     name="login"
                     fullWidth
-                    label="Login" 
+                    label="Login"
                     InputProps={{
                         startAdornment: (
-                          <InputAdornment position="start">
-                            <AccountCircle />
-                          </InputAdornment>
+                            <InputAdornment position="start">
+                                <AccountCircle />
+                            </InputAdornment>
                         ),
-                      }}
+                    }}
                     variant="outlined"
                     helperText={`${validationErrors.login ? 'Enter login' : ''}`}
                     onChange={handleInputChange} />
@@ -135,14 +139,14 @@ const Auth = ({ history }) => {
                     name="password"
                     type="password"
                     fullWidth
-                    label="Password" 
+                    label="Password"
                     InputProps={{
                         startAdornment: (
-                          <InputAdornment position="start">
-                            <Lock />
-                          </InputAdornment>
+                            <InputAdornment position="start">
+                                <Lock />
+                            </InputAdornment>
                         ),
-                      }}
+                    }}
                     variant="outlined"
                     helperText={`${validationErrors.password ? 'Enter password' : ''}`}
                     onChange={handleInputChange} />
@@ -178,4 +182,15 @@ const Auth = ({ history }) => {
     )
 }
 
-export default Auth;
+const mapDispatchToProps = dispatch =>
+    bindActionCreators(
+        {
+            setToken
+        },
+        dispatch
+    )
+
+export default connect(
+    null,
+    mapDispatchToProps
+)(Auth)

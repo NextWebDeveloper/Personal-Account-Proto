@@ -1,3 +1,11 @@
 import newsReducer from './news'
+import authReducer from './auth'
 
-export default newsReducer
+import { combineReducers } from 'redux'
+    
+const rootReducer = combineReducers({
+    newsState: newsReducer,
+    authState: authReducer
+});
+
+export default rootReducer

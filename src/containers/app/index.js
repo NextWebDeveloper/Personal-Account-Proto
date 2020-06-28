@@ -1,13 +1,20 @@
-import React, { Fragment } from 'react'
-import { 
+import React, { useEffect } from 'react'
+import { bindActionCreators } from 'redux'
+import { connect } from 'react-redux'
+import {
+    clearToken
+} from '../../modules/auth'
+import {
 	Route,
-	Switch
- } from 'react-router-dom'
+	Switch,
+	Redirect
+} from 'react-router-dom'
 
 import NewsList from '../../pages/NewsList'
 import Auth from '../../pages/Auth'
 import NewsForm from '../../pages/NewsForm'
 import Sidebar from '../../components/sidebar'
+import PrivateRoute from '../../containers/PrivateRoute'
 
 import Box from '@material-ui/core/Box';
 import clsx from 'clsx';
@@ -44,10 +51,10 @@ const useStyles = makeStyles((theme) => ({
 	},
 }));
 
-const App = () => {
+const App = ({ isAuthenticated, authToken, clearToken }) => {
 
 	const classes = useStyles();
-	const [open, setOpen] = React.useState(true);
+	const [open, setOpen] = React.useState(false);
 
 	const handleDrawerOpen = () => {
 		setOpen(true);
@@ -57,10 +64,23 @@ const App = () => {
 		setOpen(false);
 	};
 
+	useEffect(() => {
+		if (isAuthenticated) {
+			document.addEventListener("visibilitychange", () => {
+				if (document.visibilityState === 'visible') {
+					const tokenFromStorage = localStorage.getItem('authToken')
+					if (tokenFromStorage !== authToken) {
+						clearToken();
+					}
+				}
+			});
+		}
+	}, [isAuthenticated])
+
 	return (
 		<Switch>
 			<Route exact path="/auth" component={Auth} />
-			<Fragment>
+			<PrivateRoute isAuthenticated={isAuthenticated}>
 				<Box className={classes.root}>
 					<Sidebar
 						open={open}
@@ -72,19 +92,31 @@ const App = () => {
 						})}
 					>
 						<div className={classes.drawerHeader} />
-						
+
 						<Switch>
 							<Route exact path="/news" component={NewsList} />
 							<Route exact path="/news/add" component={NewsForm} />
 							<Route exact path="/news/:id" component={NewsForm} />
+							<Route path="*">
+								<Redirect to="/news" />
+          					</Route>
 						</Switch>
 
 					</main>
 				</Box >
-			</Fragment>
-
+			</PrivateRoute>
 		</Switch>
 	);
 }
 
-export default App
+const mapStateToProps = state => ({ isAuthenticated: state.authState.authToken !== null, authToken: state.authState.authToken })
+
+const mapDispatchToProps = dispatch =>
+    bindActionCreators(
+        {
+            clearToken
+        },
+        dispatch
+    )
+
+export default connect(mapStateToProps, mapDispatchToProps)(App);

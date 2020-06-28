@@ -7,7 +7,6 @@ import {
 } from '../../modules/news'
 
 import Button from '@material-ui/core/Button';
-import Icon from '@material-ui/core/Icon';
 import Box from '@material-ui/core/Box';
 
 import { makeStyles } from '@material-ui/core/styles';
@@ -38,7 +37,6 @@ const useStyles = makeStyles((theme) => ({
 }));
 
 const NewsList = ({news, deleteNews}) => {
-    console.log(news)
 
     const classes = useStyles();
 
@@ -108,7 +106,7 @@ const NewsList = ({news, deleteNews}) => {
     )
 }
 
-const mapStateToProps = state => ({ news: state.news })
+const mapStateToProps = state => ({ news: state.newsState.news })
 
 const mapDispatchToProps = dispatch =>
     bindActionCreators(

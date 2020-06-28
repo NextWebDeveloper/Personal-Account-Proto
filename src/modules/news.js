@@ -1,7 +1,7 @@
 const SAVE_NEWS = 'SAVE_NEWS'
 const DELETE_NEWS = 'DELETE_NEWS'
 
-export default (state, action) => {
+export default (state = {}, action) => {
 	switch (action.type) {
 		case SAVE_NEWS:
 			if (action.news.id !== null && action.news.id !== undefined) {
