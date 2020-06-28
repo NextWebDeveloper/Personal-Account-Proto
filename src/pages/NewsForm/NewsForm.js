@@ -41,7 +41,7 @@ const useStyles = makeStyles((theme) => ({
 }));
 
 
-const NewsForm = ({ location, saveNews }) => {
+const NewsForm = ({ location, saveNews, history }) => {
 
     const classes = useStyles();
 
@@ -68,17 +68,21 @@ const NewsForm = ({ location, saveNews }) => {
             }));
         }
 
-        saveNews(news);
+        if (news.title && news.description && news.image) {
+            saveNews(news);
+            history.push('/news');
+        }
+
     }
 
     const handleInputChange = (e) => {
-        setValidationErrors({
-            ...validationErrors,
-            [e.target.name]: false
-        });
         setNews({
             ...news,
             [e.target.name]: e.target.value
+        });
+        setValidationErrors({
+            ...validationErrors,
+            [e.target.name]: e.target.value.length > 0 ? false : true
         });
     }
 

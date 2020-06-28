@@ -1,6 +1,10 @@
 import React, { useState, useEffect } from 'react';
 import { Link } from 'react-router-dom'
 import { connect } from 'react-redux'
+import { bindActionCreators } from 'redux'
+import {
+    deleteNews
+} from '../../modules/news'
 
 import Button from '@material-ui/core/Button';
 import Icon from '@material-ui/core/Icon';
@@ -33,16 +37,18 @@ const useStyles = makeStyles((theme) => ({
     }
 }));
 
-const NewsList = ({news}) => {
+const NewsList = ({news, deleteNews}) => {
+    console.log(news)
 
     const classes = useStyles();
 
-    const newsListContent = news.length === 0 ? <h2>You have not created any news yet :( Click the button in the upper right to add your first news!</h2> : ( news.map(singleNews => {
-        console.log(singleNews)
+    const newsListContent = news.length === 0 ? 
+        <h2>You have not created any news yet :( Click the button in the upper right to add your first news!</h2> 
+        : ( news.map(singleNews => {
         return (
             <Box
                 className={classes.singleNewsWrapper}
-                key={singleNews.title}>
+                key={singleNews.id}>
                 <Box
                     style={{ backgroundImage: `url(${singleNews.image})` }} 
                     className={classes.newsImageWrapper}>
@@ -62,14 +68,14 @@ const NewsList = ({news}) => {
                             mr={1}>
                             <Button 
                                 component={Link} 
-                                to="/news/add"
+                                to={{pathname: `/news/${singleNews.id}`, news: singleNews}}
                                 variant="contained"
                                 size="large"
                                 color="primary">Edit news
                             </Button>
                         </Box>
                         <Button 
-                            
+                            onClick={() => deleteNews(singleNews.id)}
                             variant="contained"
                             size="large"
                             color="secondary">Delete news
@@ -104,4 +110,12 @@ const NewsList = ({news}) => {
 
 const mapStateToProps = state => ({ news: state.news })
 
-export default connect(mapStateToProps)(NewsList);
+const mapDispatchToProps = dispatch =>
+    bindActionCreators(
+        {
+            deleteNews
+        },
+        dispatch
+    )
+
+export default connect(mapStateToProps, mapDispatchToProps)(NewsList);

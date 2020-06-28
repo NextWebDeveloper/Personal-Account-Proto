@@ -1,13 +1,15 @@
-import React from 'react'
-import { Route } from 'react-router-dom'
+import React, { Fragment } from 'react'
+import { 
+	Route,
+	Switch
+ } from 'react-router-dom'
 
 import NewsList from '../../pages/NewsList'
-import About from '../about'
-
+import Auth from '../../pages/Auth'
 import NewsForm from '../../pages/NewsForm'
-
 import Sidebar from '../../components/sidebar'
 
+import Box from '@material-ui/core/Box';
 import clsx from 'clsx';
 import { makeStyles } from '@material-ui/core/styles';
 
@@ -56,24 +58,32 @@ const App = () => {
 	};
 
 	return (
-		<div className={classes.root}>
-			<Sidebar
-				open={open}
-				handleDrawerOpen={handleDrawerOpen}
-				handleDrawerClose={handleDrawerClose} />
-			<main
-				className={clsx(classes.content, {
-					[classes.contentShift]: open,
-				})}
-			>
-				<div className={classes.drawerHeader} />
+		<Switch>
+			<Route exact path="/auth" component={Auth} />
+			<Fragment>
+				<Box className={classes.root}>
+					<Sidebar
+						open={open}
+						handleDrawerOpen={handleDrawerOpen}
+						handleDrawerClose={handleDrawerClose} />
+					<main
+						className={clsx(classes.content, {
+							[classes.contentShift]: open,
+						})}
+					>
+						<div className={classes.drawerHeader} />
+						
+						<Switch>
+							<Route exact path="/news" component={NewsList} />
+							<Route exact path="/news/add" component={NewsForm} />
+							<Route exact path="/news/:id" component={NewsForm} />
+						</Switch>
 
-				<Route exact path="/about-us" component={About} />
-				<Route exact path="/news" component={NewsList} />
-				<Route exact path="/news/add" component={NewsForm} />
+					</main>
+				</Box >
+			</Fragment>
 
-			</main>
-		</div >
+		</Switch>
 	);
 }
 
